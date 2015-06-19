@@ -1,10 +1,12 @@
 // ==UserScript==
 // @name        Join Game in Steam Monster Game
-// @namespace   http://www.github.com/bountygiver
+// @namespace   https://github.com/bountygiver/steamSummerGameJoin
 // @description Join Game
 // @include     http://steamcommunity.com/minigame/
 // @version     1
 // @grant       none
+// @updateURL https://github.com/bountygiver/steamSummerGameJoin/raw/master/joinGame.user.js
+// @downloadURL https://github.com/bountygiver/steamSummerGameJoin/raw/master/joinGame.user.js
 // ==/UserScript==
 
 (function(w) {
