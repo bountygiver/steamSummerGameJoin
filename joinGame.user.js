@@ -40,6 +40,10 @@
     
     var play_button = document.querySelector( '.new_game' );
     if (play_button) play_button.style.marginTop = '0px';
+    else {
+        play_button = document.querySelector( '.current_game' );
+        if (play_button) play_button.style.marginTop = '0px';
+    }
     
     function JG() {
         ShowPromptDialog("Enter room number", "Enter room number you want to join:"
