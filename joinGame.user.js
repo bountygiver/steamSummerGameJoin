@@ -3,7 +3,7 @@
 // @namespace   https://github.com/bountygiver/steamSummerGameJoin
 // @description Join Game
 // @include     http://steamcommunity.com/minigame/
-// @version     1.1.0
+// @version     1.1.1
 // @grant       none
 // @updateURL https://github.com/bountygiver/steamSummerGameJoin/raw/master/joinGame.user.js
 // @downloadURL https://github.com/bountygiver/steamSummerGameJoin/raw/master/joinGame.user.js
@@ -12,6 +12,7 @@
 (function(w) {
     var defaultNum = 0;
     var attemptNum = 0;
+    var retryDelay = 1500;
     var startLoop = false;
     
     var joiningDesc = document.createElement("span");
@@ -20,6 +21,10 @@
     var join_row = document.createElement("div");
     var join_button = document.createElement("span");
     var join_label = document.createElement("span");
+    var auto_delay = document.createElement("input");
+    var delay_row = document.createElement("div");
+    var delay_label = document.createElement("span");
+    var delay_slider = document.createElement("span");
 
     join_label.innerHTML = "Join Game";
 
@@ -35,10 +40,26 @@
     join_auto_button.onclick = AG;
     join_auto_button.style.marginTop = '6px';
     
+    auto_delay.setAttribute("type", "range");
+    auto_delay.setAttribute("min", "500");
+    auto_delay.setAttribute("max", "10000");
+    auto_delay.setAttribute("value", retryDelay);
+    auto_delay.setAttribute("setp", "100");
+    auto_delay.onchange = function(val) {
+        retryDelay = auto_delay.value;
+        delay_label.innerHTML = "Delay: " + retryDelay;
+    };
+    
+    delay_label.innerHTML = "Delay: " + auto_delay.value;
+    
     join_button.appendChild(join_label);
     join_auto_button.appendChild(join_auto_label);
     join_row.appendChild(join_button);
     join_row.appendChild(join_auto_button);
+    delay_slider.appendChild(auto_delay);
+    delay_row.appendChild(delay_label);
+    delay_row.appendChild(delay_slider);
+    join_row.appendChild(delay_row);
     play_container.appendChild(join_row);
     
     var play_button = document.querySelector( '.new_game' );
@@ -99,12 +120,12 @@
 					} else {
 						console.log('Not successful to join game ' + room);
             joiningDesc.innerHTML = "Attempting to join (" + attemptNum + ")... <br>" + json.errorMsg;
-            setTimeout(JoinLoop(room), 1500);
+            setTimeout(JoinLoop, retryDelay, room);
 					}
 				}).fail(
 				function( jqXHR ) {
 					console.log('Failed to join game ' + room);
-          setTimeout(JoinLoop(room), 1500);
+          setTimeout(JoinLoop, retryDelay, room);
           var responseJSON = jQuery.parseJSON(jqXHR.responseText) ;
           joiningDesc.innerHTML = "Attempting to join (" + attemptNum + ")...<br>" + responseJSON.errorMsg;
 				}
@@ -113,14 +134,16 @@
 		catch(e)	// 3.3 catch other errors (timeout, etc) that aren't handled by JSON
 			{
 				console.log(e);
-        setTimeout(JoinLoop(room), 1500);
+          joiningDesc.innerHTML = "Attempting to join (" + attemptNum + ")...<br>Unknown error";
+          setTimeout(JoinLoop, retryDelay, room);
 			}
     }
     }
     
     function AJ(k) {
         startLoop = true;
-        setTimeout(JoinLoop(k), 1500);
+        console.log("Joining " + k + " with " + retryDelay + "ms interval");
+        setTimeout(JoinLoop, 500, k);
         ShowBlockingWaitDialogWithDismiss("Joining game " + k + "...", "Attempting to join..."
                                           ).done(function() {
             startLoop = false;
