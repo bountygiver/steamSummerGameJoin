@@ -3,7 +3,7 @@
 // @namespace   https://github.com/bountygiver/steamSummerGameJoin
 // @description Join Game
 // @include     http://steamcommunity.com/minigame/
-// @version     1.1.2
+// @version     1.2.0
 // @grant       none
 // @updateURL https://github.com/bountygiver/steamSummerGameJoin/raw/master/joinGame.user.js
 // @downloadURL https://github.com/bountygiver/steamSummerGameJoin/raw/master/joinGame.user.js
@@ -45,12 +45,20 @@
     auto_delay.setAttribute("max", "10000");
     auto_delay.setAttribute("value", retryDelay);
     auto_delay.setAttribute("step", "100");
-    auto_delay.onchange = function(val) {
+    auto_delay.style.width = "200px";
+    auto_delay.oninput = auto_delay.onchange = function(val) {
         retryDelay = auto_delay.value;
         delay_label.innerHTML = "Delay: " + retryDelay;
     };
     
     delay_label.innerHTML = "Delay: " + auto_delay.value;
+    delay_label.style.backgroundColor = "#4F463D";
+    delay_label.style.fontFamily = '"Press Start 2P",arial,sans-serif';
+    delay_label.style.padding = '8px';
+    delay_label.style.color = "#FFF";
+    delay_label.style.width = "200px";
+    delay_label.style.float = "left";
+    delay_label.className = "nowrap";
     
     join_button.appendChild(join_label);
     join_auto_button.appendChild(join_auto_label);
