@@ -3,7 +3,7 @@
 // @namespace   https://github.com/bountygiver/steamSummerGameJoin
 // @description Join Game
 // @include     http://steamcommunity.com/minigame/
-// @version     1.1.1
+// @version     1.1.2
 // @grant       none
 // @updateURL https://github.com/bountygiver/steamSummerGameJoin/raw/master/joinGame.user.js
 // @downloadURL https://github.com/bountygiver/steamSummerGameJoin/raw/master/joinGame.user.js
@@ -44,7 +44,7 @@
     auto_delay.setAttribute("min", "500");
     auto_delay.setAttribute("max", "10000");
     auto_delay.setAttribute("value", retryDelay);
-    auto_delay.setAttribute("setp", "100");
+    auto_delay.setAttribute("step", "100");
     auto_delay.onchange = function(val) {
         retryDelay = auto_delay.value;
         delay_label.innerHTML = "Delay: " + retryDelay;
