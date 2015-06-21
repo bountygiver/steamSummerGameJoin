@@ -3,7 +3,7 @@
 // @namespace   https://github.com/bountygiver/steamSummerGameJoin
 // @description Join Game
 // @include     http://steamcommunity.com/minigame/
-// @version     1
+// @version     1.1.0
 // @grant       none
 // @updateURL https://github.com/bountygiver/steamSummerGameJoin/raw/master/joinGame.user.js
 // @downloadURL https://github.com/bountygiver/steamSummerGameJoin/raw/master/joinGame.user.js
@@ -11,7 +11,10 @@
 
 (function(w) {
     var defaultNum = 0;
+    var attemptNum = 0;
     var startLoop = false;
+    
+    var joiningDesc = document.createElement("span");
     
     var play_container = document.querySelector( '.section_play' );
     var join_row = document.createElement("div");
@@ -70,7 +73,8 @@
       var $OKButton = $J('<button/>', {type: 'submit', 'class': 'btn_green_white_innerfade btn_medium' } ).append( elButtonLabel );
       $OKButton.click( fnOK );
       container.append( throbber );
-      container.append( strDescription );
+      joiningDesc.innerHTML = strDescription;
+      container.append( joiningDesc );
 
       var Modal = _BuildDialog( strTitle, container, [ $OKButton ], fnOK, { bExplicitDismissalOnly: true } );
       deferred.always( function() { Modal.Dismiss(); } );
@@ -84,6 +88,7 @@
     
     function JoinLoop(room) {
         if (startLoop) {
+        attemptNum++;
             try {
         $J.post('http://steamcommunity.com/minigame/ajaxjoingame/', { 'gameid' : room, 'sessionid' : w.g_sessionID })
 			.done(
@@ -93,12 +98,15 @@
 						top.location.href = 'http://steamcommunity.com/minigame/towerattack/';
 					} else {
 						console.log('Not successful to join game ' + room);
+            joiningDesc.innerHTML = "Attempting to join (" + attemptNum + ")... <br>" + json.errorMsg;
             setTimeout(JoinLoop(room), 1500);
 					}
 				}).fail(
 				function( jqXHR ) {
 					console.log('Failed to join game ' + room);
           setTimeout(JoinLoop(room), 1500);
+          var responseJSON = jQuery.parseJSON(jqXHR.responseText) ;
+          joiningDesc.innerHTML = "Attempting to join (" + attemptNum + ")...<br>" + responseJSON.errorMsg;
 				}
 			);
 		}
@@ -113,7 +121,7 @@
     function AJ(k) {
         startLoop = true;
         setTimeout(JoinLoop(k), 1500);
-        ShowBlockingWaitDialogWithDismiss("Joining game", "Attempting to join " + k + "..."
+        ShowBlockingWaitDialogWithDismiss("Joining game " + k + "...", "Attempting to join..."
                                           ).done(function() {
             startLoop = false;
         });
@@ -124,6 +132,7 @@
            ).done( function(room) {
             if (room > 0) {
                 defaultNum = room;
+                attemptNum = 0;
                 AJ(room);
             }
             else {
